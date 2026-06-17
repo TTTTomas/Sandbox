@@ -141,10 +141,10 @@ button.ctrl.primary{background:var(--accent); color:#04140a; border-color:var(--
   background:var(--bg); color:var(--txt); font-size:16px; outline:none;  /* >=16px: avoids iOS focus-zoom */
 }
 .search input:focus{border-color:var(--accent2)}
-.caselist{overflow-y:auto; -webkit-overflow-scrolling:touch; padding:8px 8px 16px}
+.caselist{overflow-y:auto; -webkit-overflow-scrolling:touch; padding:0 8px 16px}
 .grouphdr{
   font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:var(--dim);
-  padding:12px 8px 4px; position:sticky; top:0; background:var(--panel);
+  padding:12px 8px 5px; position:sticky; top:0; background:var(--panel); z-index:1;
 }
 .case{padding:9px 11px; border-radius:9px; cursor:pointer; border:1px solid transparent; margin:2px 0}
 .case:active{background:var(--panel2)}

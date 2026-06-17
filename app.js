@@ -213,7 +213,7 @@
     });
   }
   const drawer = $('drawer'), backdrop = $('backdrop');
-  function openDrawer(){ drawer.classList.add('open'); backdrop.classList.add('show'); $('search').focus(); }
+  function openDrawer(){ drawer.classList.add('open'); backdrop.classList.add('show'); }
   function closeDrawer(){ drawer.classList.remove('open'); backdrop.classList.remove('show'); }
   function toggleDrawer(){ drawer.classList.contains('open') ? closeDrawer() : openDrawer(); }
 
