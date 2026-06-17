@@ -75,6 +75,8 @@
   const endDrag = () => { drag = null; cubeEl.style.transition = ''; };
   scene.addEventListener('pointerup', endDrag);
   scene.addEventListener('pointercancel', endDrag);
+  // Keep touch drags from scrolling the page.
+  scene.addEventListener('touchmove', e => e.preventDefault(), { passive:false });
 
   /* ---------- Move animation ---------- */
   const animSpec = tok => {
@@ -85,17 +87,23 @@
     return { axis, ang, letter: tok[0] };
   };
   let animDur = 620;
-  function animateMove(tok){
+  // Rotate the 9 turning cubies as one rigid group so they share a single
+  // transform (no per-piece drift / scrunching during the turn).
+  function animateMove(tok, dur = animDur){
     const { axis, ang, letter } = animSpec(tok);
+    const group = document.createElement('div');
+    group.className = 'turn-group';
+    cubeEl.appendChild(group);
     const moving = cubies.filter(c => LAYER[letter](c.pos));
-    moving.forEach(c => {
-      c.el.style.transition = `transform ${animDur}ms ease-in-out`;
-      c.el.style.transform = `rotate${axis}(${ang}deg) ${baseT(c.pos)}`;
-    });
+    moving.forEach(c => group.appendChild(c.el));   // identity transform: visuals unchanged
+    void group.offsetWidth;                          // flush before transition
+    group.style.transition = `transform ${dur}ms ease-in-out`;
+    group.style.transform = `rotate${axis}(${ang}deg)`;
     return new Promise(res => setTimeout(() => {
-      moving.forEach(c => { c.el.style.transition = 'none'; c.el.style.transform = baseT(c.pos); });
+      moving.forEach(c => cubeEl.appendChild(c.el));  // back to base; render() recolors
+      group.remove();
       res();
-    }, animDur + 10));
+    }, dur + 10));
   }
 
   /* ---------- Trainer state ---------- */
@@ -152,7 +160,20 @@
     render(state); renderAlgline();
     busy = false; updateProgress();
   }
-  function reset(){ if (!busy){ stopPlay(); loadCase(current); } }
+  // Rewind: run the algorithm backwards quickly to the start position.
+  async function reset(){
+    if (busy) return;
+    stopPlay();
+    const fast = 150;
+    while (idx > 0){
+      busy = true; updateProgress();
+      const inv = F.invertTok(current.toks[idx - 1]);
+      await animateMove(inv, fast);
+      state = F.applyToken(state, inv); idx--;
+      render(state); renderAlgline();
+      busy = false; updateProgress();
+    }
+  }
   async function play(){
     if (playing){ stopPlay(); return; }
     if (idx >= current.toks.length) loadCase(current);
@@ -194,6 +215,16 @@
   function closeDrawer(){ drawer.classList.remove('open'); backdrop.classList.remove('show'); }
   function toggleDrawer(){ drawer.classList.contains('open') ? closeDrawer() : openDrawer(); }
 
+  /* ---------- Settings popover ---------- */
+  const settings = $('settings'), settingsBtn = $('settingsBtn');
+  const closeSettings = () => settings.classList.remove('open');
+  settingsBtn.onclick = e => { e.stopPropagation(); settings.classList.toggle('open'); };
+  document.addEventListener('pointerdown', e => {
+    if (settings.classList.contains('open') &&
+        !settings.contains(e.target) && e.target !== settingsBtn)
+      closeSettings();
+  });
+
   /* ---------- Wire up ---------- */
   $('casesBtn').onclick   = toggleDrawer;
   $('drawerClose').onclick = closeDrawer;
@@ -208,13 +239,13 @@
 
   document.addEventListener('keydown', e => {
     if (e.target.tagName === 'INPUT') {
-      if (e.key === 'Escape') closeDrawer();
+      if (e.key === 'Escape'){ closeDrawer(); closeSettings(); }
       return;
     }
     if (e.key === 'ArrowRight'){ e.preventDefault(); stopPlay(); stepForward(); }
     else if (e.key === 'ArrowLeft'){ e.preventDefault(); stepBack(); }
     else if (e.key === ' '){ e.preventDefault(); play(); }
-    else if (e.key === 'Escape') closeDrawer();
+    else if (e.key === 'Escape'){ closeDrawer(); closeSettings(); }
   });
 
   buildList();

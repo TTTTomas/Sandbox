@@ -12,8 +12,16 @@
 <header>
   <h1>F2L Trainer</h1>
   <span class="sub">front-right slot · white cross</span>
+  <button id="settingsBtn" title="Settings">⚙</button>
   <button id="casesBtn">☰  Cases</button>
 </header>
+
+<!-- Settings popover -->
+<div id="settings" class="popover">
+  <label class="setlabel">Animation speed</label>
+  <div class="speed">Slow <input type="range" id="speed" min="180" max="1300" value="620" step="20"> Fast</div>
+  <div class="sethint">Drag the cube to rotate · ← / → step · Space play/pause</div>
+</div>
 
 <!-- Collapsible case selector -->
 <div id="backdrop"></div>
@@ -49,10 +57,6 @@
     <button class="ctrl" id="fwd" title="Step forward">▶▶</button>
     <span class="progress" id="progress">0 / 0</span>
   </div>
-
-  <div class="speed">Slow <input type="range" id="speed" min="180" max="1300" value="620" step="20"> Fast</div>
-
-  <div class="hint">Drag the cube to rotate. Tap <b>Cases</b> to pick a case (it closes when you choose). Keys: ← / → step, Space play/pause.</div>
 </main>
 
 <script src="engine.js"></script>
