@@ -118,7 +118,7 @@
     render(state);
     $('caseTitle').textContent = `Case ${c.num} · ${c.group}`;
     $('caseDesc').textContent = c.desc;
-    $('casesBtn').textContent = `☰  Case ${c.num}`;
+    $('casesLabel').textContent = `Case ${c.num}`;
     renderAlgline();
     updateProgress();
     document.querySelectorAll('.case').forEach(el =>
@@ -137,7 +137,9 @@
     $('progress').textContent = `${idx} / ${current.toks.length}`;
     $('back').disabled = busy || idx === 0;
     $('fwd').disabled  = busy || idx === current.toks.length;
-    $('play').textContent = playing ? '❚❚' : '▶';
+    $('play').innerHTML = playing
+      ? '<i class="ph-fill ph-pause"></i>'
+      : '<i class="ph-fill ph-play"></i>';
   }
 
   async function stepForward(){
@@ -221,7 +223,7 @@
   settingsBtn.onclick = e => { e.stopPropagation(); settings.classList.toggle('open'); };
   document.addEventListener('pointerdown', e => {
     if (settings.classList.contains('open') &&
-        !settings.contains(e.target) && e.target !== settingsBtn)
+        !settings.contains(e.target) && !settingsBtn.contains(e.target))
       closeSettings();
   });
 
