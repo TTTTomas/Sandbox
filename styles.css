@@ -31,14 +31,14 @@ header .sub{color:var(--dim); font-size:12px; flex:1 1 auto; overflow:hidden; te
 }
 #settingsBtn:active{transform:translateY(1px)}
 
-/* Settings popover (anchored above the controls) */
+/* Settings popover (centered) */
 .popover{
-  position:fixed; left:50%; bottom:84px; z-index:45; width:min(86vw,300px);
+  position:fixed; left:50%; top:50%; z-index:45; width:min(86vw,300px);
   background:var(--panel); border:1px solid var(--line); border-radius:12px;
   box-shadow:0 16px 40px rgba(0,0,0,.5); padding:14px;
-  opacity:0; transform:translate(-50%,8px) scale(.98); pointer-events:none; transition:.16s;
+  opacity:0; transform:translate(-50%,-46%) scale(.98); pointer-events:none; transition:.16s;
 }
-.popover.open{opacity:1; transform:translate(-50%,0) scale(1); pointer-events:auto}
+.popover.open{opacity:1; transform:translate(-50%,-50%) scale(1); pointer-events:auto}
 .setlabel{display:block; font-size:12px; color:var(--dim); margin-bottom:6px}
 .sethint{font-size:11px; color:var(--dim); margin-top:12px; line-height:1.5}
 
@@ -96,6 +96,7 @@ button i{vertical-align:middle; line-height:1}
 #casesBtn i{font-size:17px}
 #drawerClose i{font-size:18px}
 button.ctrl i{font-size:22px}
+#settingsBtn i{font-size:16px}
 
 /* Controls */
 .controls{display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:center; width:100%}
