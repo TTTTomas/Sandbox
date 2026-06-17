@@ -3,7 +3,7 @@
   --txt:#e6edf3; --dim:#9aa4b0; --accent:#3fb950; --accent2:#388bfd; --chip:#262d38;
 }
 *{box-sizing:border-box}
-html,body{margin:0; height:100%}
+html,body{margin:0; height:100%; overflow-x:hidden}
 body{
   background:radial-gradient(120% 120% at 50% 0%, #131925 0%, var(--bg) 60%);
   color:var(--txt);
@@ -138,7 +138,7 @@ button.ctrl.primary{background:var(--accent); color:#04140a; border-color:var(--
 .search{padding:10px 14px; border-bottom:1px solid var(--line)}
 .search input{
   width:100%; padding:10px 12px; border-radius:9px; border:1px solid var(--line);
-  background:var(--bg); color:var(--txt); font-size:15px; outline:none;
+  background:var(--bg); color:var(--txt); font-size:16px; outline:none;  /* >=16px: avoids iOS focus-zoom */
 }
 .search input:focus{border-color:var(--accent2)}
 .caselist{overflow-y:auto; -webkit-overflow-scrolling:touch; padding:8px 8px 16px}
