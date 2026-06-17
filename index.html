@@ -2,540 +2,60 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0e1116">
 <title>F2L Trainer · Speedcubing</title>
-<style>
-  :root{
-    --bg:#0e1116; --panel:#161b22; --panel2:#1b2230; --line:#2a313c;
-    --txt:#e6edf3; --dim:#8b949e; --accent:#3fb950; --accent2:#388bfd;
-    --chip:#21262d;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;height:100%}
-  body{
-    background:var(--bg); color:var(--txt);
-    font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    display:flex; flex-direction:column; height:100vh; overflow:hidden;
-  }
-  header{
-    padding:10px 18px; border-bottom:1px solid var(--line);
-    display:flex; align-items:baseline; gap:12px; flex:0 0 auto;
-  }
-  header h1{font-size:16px; margin:0; letter-spacing:.3px}
-  header .sub{color:var(--dim); font-size:12px}
-  .layout{display:flex; flex:1 1 auto; min-height:0}
-
-  /* Sidebar */
-  aside{
-    width:300px; flex:0 0 300px; border-right:1px solid var(--line);
-    display:flex; flex-direction:column; min-height:0; background:var(--panel);
-  }
-  .search{padding:10px; border-bottom:1px solid var(--line)}
-  .search input{
-    width:100%; padding:8px 10px; border-radius:7px; border:1px solid var(--line);
-    background:var(--bg); color:var(--txt); font-size:13px; outline:none;
-  }
-  .search input:focus{border-color:var(--accent2)}
-  .caselist{overflow-y:auto; flex:1 1 auto; padding:6px 6px 30px}
-  .grouphdr{
-    font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:var(--dim);
-    padding:12px 8px 4px; position:sticky; top:0; background:var(--panel); z-index:1;
-  }
-  .case{
-    padding:8px 10px; border-radius:8px; cursor:pointer; border:1px solid transparent;
-    margin:2px 0;
-  }
-  .case:hover{background:var(--panel2)}
-  .case.active{background:var(--panel2); border-color:var(--accent)}
-  .case .name{font-size:12px; color:var(--dim); display:flex; justify-content:space-between}
-  .case .alg{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:13px; margin-top:2px}
-  .case.active .alg{color:var(--accent)}
-
-  /* Main */
-  main{flex:1 1 auto; display:flex; flex-direction:column; min-width:0; align-items:center;
-       padding:14px; overflow:auto}
-  .stage{
-    width:100%; max-width:460px; display:flex; flex-direction:column; align-items:center; gap:14px;
-  }
-  .scene{
-    width:340px; height:340px; perspective:1100px; touch-action:none;
-    user-select:none; cursor:grab; flex:0 0 auto;
-  }
-  .scene:active{cursor:grabbing}
-  .cube{
-    width:100%; height:100%; position:relative; transform-style:preserve-3d;
-    transition:transform .12s linear;
-  }
-  .cubie{position:absolute; top:50%; left:50%; transform-style:preserve-3d; margin:-29px 0 0 -29px}
-  .face{
-    position:absolute; width:58px; height:58px; border-radius:7px;
-    border:2px solid #0c0e12; backface-visibility:hidden;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);
-  }
-
-  .infobar{
-    width:100%; background:var(--panel); border:1px solid var(--line); border-radius:10px;
-    padding:12px 14px;
-  }
-  .infobar .title{font-weight:600; margin-bottom:2px}
-  .infobar .desc{color:var(--dim); font-size:12px}
-  .algline{
-    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:18px;
-    margin-top:10px; display:flex; flex-wrap:wrap; gap:4px;
-  }
-  .mv{
-    padding:2px 7px; border-radius:6px; background:var(--chip); color:var(--dim);
-    transition:.15s;
-  }
-  .mv.done{color:var(--txt)}
-  .mv.next{background:var(--accent); color:#04140a; font-weight:700; box-shadow:0 0 0 2px rgba(63,185,80,.3)}
-
-  .controls{display:flex; align-items:center; gap:8px; flex-wrap:wrap; width:100%; justify-content:center}
-  button.ctrl{
-    background:var(--panel2); color:var(--txt); border:1px solid var(--line);
-    border-radius:8px; padding:9px 14px; font-size:14px; cursor:pointer; min-width:46px;
-  }
-  button.ctrl:hover{border-color:var(--accent2)}
-  button.ctrl:disabled{opacity:.4; cursor:default}
-  button.ctrl.primary{background:var(--accent); color:#04140a; border-color:var(--accent); font-weight:700; min-width:90px}
-  .speed{display:flex; align-items:center; gap:8px; color:var(--dim); font-size:12px}
-  .speed input{accent-color:var(--accent)}
-  .viewbtns{display:flex; gap:6px}
-  .viewbtns button{font-size:12px; padding:6px 10px}
-  .progress{font-variant-numeric:tabular-nums; color:var(--dim); font-size:12px; min-width:54px; text-align:center}
-  .hint{color:var(--dim); font-size:11px; text-align:center; max-width:420px}
-  a{color:var(--accent2)}
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
 <header>
   <h1>F2L Trainer</h1>
-  <span class="sub">First-two-layers case browser · front-right slot · white cross</span>
+  <span class="sub">front-right slot · white cross</span>
+  <button id="casesBtn">☰  Cases</button>
 </header>
 
-<div class="layout">
-  <aside>
-    <div class="search"><input id="search" placeholder="Filter cases (alg or description)…" autocomplete="off"></div>
-    <div class="caselist" id="caselist"></div>
-  </aside>
-
-  <main>
-    <div class="stage">
-      <div class="scene" id="scene"><div class="cube" id="cube"></div></div>
-
-      <div class="viewbtns">
-        <button class="ctrl" data-view="topfront">Top / F-R</button>
-        <button class="ctrl" data-view="cross">Cross (bottom)</button>
-        <button class="ctrl" data-view="reset">Re-center</button>
-      </div>
-
-      <div class="infobar">
-        <div class="title" id="caseTitle">—</div>
-        <div class="desc" id="caseDesc"></div>
-        <div class="algline" id="algline"></div>
-      </div>
-
-      <div class="controls">
-        <button class="ctrl" id="reset" title="Back to start (scrambled case)">⟲ Reset</button>
-        <button class="ctrl" id="back" title="Step back">◀</button>
-        <button class="ctrl primary" id="play" title="Play / pause">▶ Play</button>
-        <button class="ctrl" id="fwd" title="Step forward">▶</button>
-        <span class="progress" id="progress">0 / 0</span>
-      </div>
-      <div class="speed">
-        Slow <input type="range" id="speed" min="180" max="1300" value="620" step="20"> Fast
-      </div>
-      <div class="hint">Drag the cube to rotate the view. Keys: ← / → step, Space play/pause. White cross + the target corner & edge are coloured; everything else is dimmed.</div>
-    </div>
-  </main>
+<!-- Collapsible case selector -->
+<div id="backdrop"></div>
+<div id="drawer">
+  <div class="drawerhead">
+    <strong>Choose a case</strong>
+    <span class="spacer"></span>
+    <button id="drawerClose">Close ✕</button>
+  </div>
+  <div class="search"><input id="search" placeholder="Filter (alg or description)…" autocomplete="off"></div>
+  <div class="caselist" id="caselist"></div>
 </div>
 
-<script>
-"use strict";
+<main>
+  <div class="scene" id="scene"><div class="cube" id="cube"></div></div>
 
-/* ---------- Colours ---------- */
-const COLORS = { W:'#f0f0f0', Y:'#ffd500', G:'#009b48', B:'#0046ad', R:'#c2143a', O:'#ff6219', X:'#21262d' };
+  <div class="viewbtns">
+    <button data-view="topfront">Top / F-R</button>
+    <button data-view="cross">Cross (bottom)</button>
+    <button data-view="recenter">Re-center</button>
+  </div>
 
-/* ---------- Geometry / move engine ----------
-   Model space: +x right, +y up, +z front (right-handed).
-   A "move" (R,L,U,D,F,B) is a clockwise quarter turn viewed from outside that face. */
-const DV = { '+x':[1,0,0],'-x':[-1,0,0],'+y':[0,1,0],'-y':[0,-1,0],'+z':[0,0,1],'-z':[0,0,-1] };
-const vkey = v => v.join(',');
-const dirFromVec = v => {
-  for (const d in DV){ const u=DV[d]; if(u[0]===v[0]&&u[1]===v[1]&&u[2]===v[2]) return d; }
-};
-// rotation of a vector for each face's clockwise turn
-const ROT = {
-  R: v => [ v[0],  v[2], -v[1] ],
-  L: v => [ v[0], -v[2],  v[1] ],
-  U: v => [-v[2],  v[1],  v[0] ],
-  D: v => [ v[2],  v[1], -v[0] ],
-  F: v => [ v[1], -v[0],  v[2] ],
-  B: v => [-v[1],  v[0],  v[2] ],
-};
-const LAYER = {
-  R: p=>p[0]===1, L: p=>p[0]===-1,
-  U: p=>p[1]===1, D: p=>p[1]===-1,
-  F: p=>p[2]===1, B: p=>p[2]===-1,
-};
+  <div class="infobar">
+    <div class="title" id="caseTitle">—</div>
+    <div class="desc" id="caseDesc"></div>
+    <div class="algline" id="algline"></div>
+  </div>
 
-// build the list of cubie home positions
-const HOMES = [];
-for (let x=-1;x<=1;x++) for (let y=-1;y<=1;y++) for (let z=-1;z<=1;z++)
-  if (!(x===0&&y===0&&z===0)) HOMES.push([x,y,z]);
+  <div class="controls">
+    <button class="ctrl" id="reset" title="Back to start">⟲</button>
+    <button class="ctrl" id="back" title="Step back">◀</button>
+    <button class="ctrl primary" id="play" title="Play / pause">▶</button>
+    <button class="ctrl" id="fwd" title="Step forward">▶▶</button>
+    <span class="progress" id="progress">0 / 0</span>
+  </div>
 
-const outerDirs = p => {
-  const d=[];
-  if(p[0]===1)d.push('+x'); if(p[0]===-1)d.push('-x');
-  if(p[1]===1)d.push('+y'); if(p[1]===-1)d.push('-y');
-  if(p[2]===1)d.push('+z'); if(p[2]===-1)d.push('-z');
-  return d;
-};
+  <div class="speed">Slow <input type="range" id="speed" min="180" max="1300" value="620" step="20"> Fast</div>
 
-// A cube state = { posKey : { dir : colorLetter } }
-function solvedState(){
-  const s = {};
-  for (const p of HOMES){
-    const f = {};
-    if(p[0]===1)f['+x']='R'; if(p[0]===-1)f['-x']='O';
-    if(p[1]===1)f['+y']='Y'; if(p[1]===-1)f['-y']='W';
-    if(p[2]===1)f['+z']='G'; if(p[2]===-1)f['-z']='B';
-    s[vkey(p)] = f;
-  }
-  return s;
-}
-function applyOnce(state, letter){
-  const rot = ROT[letter], inLayer = LAYER[letter], ns = {};
-  for (const k in state){
-    const p = k.split(',').map(Number);
-    if (inLayer(p)){
-      const np = rot(p), nf = {};
-      const f = state[k];
-      for (const d in f) nf[ dirFromVec(rot(DV[d])) ] = f[d];
-      ns[vkey(np)] = nf;
-    } else ns[k] = state[k];
-  }
-  return ns;
-}
-function applyToken(state, tok){
-  const letter = tok[0], mod = tok.slice(1);
-  const n = mod==="'" ? 3 : mod==="2" ? 2 : 1;
-  for (let i=0;i<n;i++) state = applyOnce(state, letter);
-  return state;
-}
-const parseAlg = s => s.trim().split(/\s+/).filter(Boolean);
-const invertTok = t => t.endsWith("'") ? t[0] : t.endsWith("2") ? t : t+"'";
-const invertAlg = toks => toks.slice().reverse().map(invertTok);
+  <div class="hint">Drag the cube to rotate. Tap <b>Cases</b> to pick a case (it closes when you choose). Keys: ← / → step, Space play/pause.</div>
+</main>
 
-/* ---------- Which pieces are "tracked" (coloured) ---------- */
-// white cross edges + white centre, the target corner (W/G/R) and edge (G/R)
-const TRACKED = new Set(['W','GW','RW','BW','OW','GRW','GR']);
-const colorKey = faces => Object.values(faces).slice().sort().join('');
-const isTracked = faces => TRACKED.has(colorKey(faces));
-
-/* ---------- Case generation & validation ---------- */
-// A clean F2L case: cross + the other 3 slots solved; the W/G/R pair lives in the
-// U layer or in the front-right slot. We verify by construction so every listed
-// alg is guaranteed to solve its displayed case.
-const SOLVED = solvedState();
-const FR_CORNER = '1,-1,1';   // DFR slot
-const FR_EDGE   = '1,0,1';    // FR slot
-
-function eqFaces(a,b){
-  const ka=Object.keys(a); if(ka.length!==Object.keys(b).length) return false;
-  for(const k of ka) if(a[k]!==b[k]) return false; return true;
-}
-function isCleanF2L(state){
-  let pairSolved = true;
-  for (const k in state){
-    const p = k.split(',').map(Number);
-    if (p[1]===1) continue;                 // U layer: anything allowed
-    if (k===FR_CORNER || k===FR_EDGE){      // the slot itself
-      if(!eqFaces(state[k], SOLVED[k])) pairSolved = false;
-      continue;
-    }
-    if (!eqFaces(state[k], SOLVED[k])) return null;   // some other piece disturbed
-  }
-  if (pairSolved) return null;              // already solved -> not a case
-  return true;
-}
-
-const faceText = d => ({'+y':'white up','-y':'white down','+z':'white front',
-  '-z':'white back','+x':'white right','-x':'white left'}[d]);
-const edgeFaceText = d => ({'+y':'top','-y':'bottom','+z':'front',
-  '-z':'back','+x':'right','-x':'left'}[d]);
-const slotName = (k,U,slot) => k===slot ? 'in slot' : (U?'in top':'in slot');
-
-function describe(state){
-  let cKey, eKey;
-  for (const k in state){
-    const ck = colorKey(state[k]);
-    if (ck==='GRW') cKey = k;
-    else if (ck==='GR') eKey = k;
-  }
-  const cf = state[cKey], ef = state[eKey];
-  // white direction on corner
-  let whiteDir; for(const d in cf) if(cf[d]==='W') whiteDir=d;
-  let greenDir; for(const d in ef) if(ef[d]==='G') greenDir=d;
-  const cP = cKey.split(',').map(Number), eP = eKey.split(',').map(Number);
-  const cornerInU = cP[1]===1, edgeInU = eP[1]===1;
-
-  let group;
-  if (cornerInU && edgeInU) group = 'Corner & edge in top';
-  else if (cornerInU && !edgeInU) group = 'Edge in slot, corner in top';
-  else if (!cornerInU && edgeInU) group = 'Corner in slot, edge in top';
-  else group = 'Both pieces in slot';
-
-  const desc = `Corner ${cornerInU?'in top':'in slot'} (${faceText(whiteDir)}) · `
-             + `Edge ${edgeInU?'in top':'in slot'} (${edgeFaceText(greenDir)})`;
-  return { group, desc, sig: cKey+'/'+whiteDir+'|'+eKey+'/'+greenDir };
-}
-
-// Candidate algorithms (front-right slot). Validation keeps the clean, unique ones.
-const CANDIDATES = [
-  "U R U' R'", "U' R U R'", "R U' R'", "R U R' U' R U R'",
-  "U2 R U R' U R U' R'", "U' R U' R' U R U' R'", "U R U' R' U R U' R'",
-  "R U' R' U R U' R'", "R U2 R' U' R U R'", "R U' R' U2 R U' R'",
-  "U' R U2 R' U R U' R'", "U R U2 R' U R U' R'", "U2 R U2 R' U R U' R'",
-  "U' R U R' U R U' R'", "U R U' R' U' R U R'", "U' R U' R' U' R U R'",
-  "R U' R' U' R U R'", "R U2 R' U R U' R'", "U2 R U' R' U R U' R'",
-  "U2 R U' R' U' R U R'", "R U R' U' R U R' U' R U R'", "F U R U' R' F'",
-  "R U' R' F R F'", "F' U F U' R U R'", "R U R' U R U' R'",
-  "R U' R' U R U R'", "U R U2 R' U' R U R'", "U' R U' R' U2 R U' R'",
-  "R U R' U2 R U R' U' R U R'", "U2 R U R' U' R U R'", "R U' R' U' R U' R' U R U' R'",
-];
-
-const CASES = [];
-(function build(){
-  const seen = new Set();
-  CANDIDATES.forEach(alg => {
-    const toks = parseAlg(alg);
-    let st = solvedState();
-    invertAlg(toks).forEach(t => st = applyToken(st, t));   // scramble = inverse(alg)
-    if (!isCleanF2L(st)) { console.warn('skip (not clean):', alg); return; }
-    const info = describe(st);
-    if (seen.has(info.sig)) { console.warn('skip (dup):', alg); return; }
-    seen.add(info.sig);
-    CASES.push({ alg, toks, ...info });
-  });
-  // group ordering
-  const order = ['Corner & edge in top','Corner in slot, edge in top',
-                 'Edge in slot, corner in top','Both pieces in slot'];
-  CASES.sort((a,b)=> order.indexOf(a.group)-order.indexOf(b.group)
-                  || a.toks.length-b.toks.length);
-  CASES.forEach((c,i)=>c.num=i+1);
-})();
-
-/* ---------- DOM cube ---------- */
-const S = 60, H = S/2;
-const cubeEl = document.getElementById('cube');
-const faceCSS = {
-  '+x': `translateX(${H}px) rotateY(90deg)`,
-  '-x': `translateX(${-H}px) rotateY(-90deg)`,
-  '+y': `translateY(${-H}px) rotateX(90deg)`,   // model +y (up) -> CSS up
-  '-y': `translateY(${H}px) rotateX(-90deg)`,
-  '+z': `translateZ(${H}px)`,
-  '-z': `translateZ(${-H}px) rotateY(180deg)`,
-};
-const baseT = p => `translate3d(${p[0]*S}px, ${-p[1]*S}px, ${p[2]*S}px)`;
-
-const cubies = HOMES.map(p => {
-  const el = document.createElement('div');
-  el.className = 'cubie';
-  el.style.transform = baseT(p);
-  const faces = {};
-  outerDirs(p).forEach(d => {
-    const f = document.createElement('div');
-    f.className = 'face';
-    f.style.transform = faceCSS[d];
-    el.appendChild(f);
-    faces[d] = f;
-  });
-  cubeEl.appendChild(el);
-  return { pos:p, key:vkey(p), el, faces };
-});
-const cubieByKey = Object.fromEntries(cubies.map(c=>[c.key,c]));
-
-function render(state){
-  for (const c of cubies){
-    const f = state[c.key];
-    const shown = isTracked(f);
-    for (const d in c.faces)
-      c.faces[d].style.background = shown ? COLORS[f[d]] : COLORS.X;
-  }
-}
-
-/* ---------- Animation of a single move ---------- */
-const animSpec = tok => {
-  const base = {R:['X',90],L:['X',-90],U:['Y',-90],D:['Y',90],F:['Z',90],B:['Z',-90]}[tok[0]];
-  let [axis, ang] = base;
-  if (tok.endsWith("'")) ang = -ang;
-  else if (tok.endsWith("2")) ang = 180;
-  return { axis, ang, letter: tok[0] };
-};
-let animDur = 620;
-function animateMove(tok){
-  const { axis, ang, letter } = animSpec(tok);
-  const moving = cubies.filter(c => LAYER[letter](c.pos));
-  moving.forEach(c => {
-    c.el.style.transition = `transform ${animDur}ms ease-in-out`;
-    c.el.style.transform = `rotate${axis}(${ang}deg) ${baseT(c.pos)}`;
-  });
-  return new Promise(res => setTimeout(() => {
-    moving.forEach(c => { c.el.style.transition = 'none'; c.el.style.transform = baseT(c.pos); });
-    res();
-  }, animDur + 10));
-}
-
-/* ---------- Trainer state ---------- */
-let current = null;     // active case
-let state = null;       // live cube state
-let idx = 0;            // moves applied so far
-let busy = false;
-let playing = false;
-
-const $ = id => document.getElementById(id);
-
-function loadCase(c){
-  stopPlay();
-  current = c;
-  state = solvedState();
-  invertAlg(c.toks).forEach(t => state = applyToken(state, t));  // to scramble
-  idx = 0;
-  render(state);
-  $('caseTitle').textContent = `Case ${c.num} · ${c.group}`;
-  $('caseDesc').textContent = c.desc;
-  renderAlgline();
-  updateProgress();
-  document.querySelectorAll('.case').forEach(el =>
-    el.classList.toggle('active', +el.dataset.num === c.num));
-}
-function renderAlgline(){
-  const line = $('algline'); line.innerHTML = '';
-  current.toks.forEach((t,i) => {
-    const s = document.createElement('span');
-    s.className = 'mv' + (i<idx?' done':'') + (i===idx?' next':'');
-    s.textContent = t;
-    line.appendChild(s);
-  });
-}
-function updateProgress(){
-  $('progress').textContent = `${idx} / ${current.toks.length}`;
-  $('back').disabled = busy || idx===0;
-  $('fwd').disabled  = busy || idx===current.toks.length;
-  $('play').textContent = playing ? '❚❚ Pause' : '▶ Play';
-}
-
-async function stepForward(){
-  if (busy || idx>=current.toks.length) return false;
-  busy = true; updateProgress();
-  const tok = current.toks[idx];
-  await animateMove(tok);
-  state = applyToken(state, tok);
-  idx++;
-  render(state); renderAlgline();
-  busy = false; updateProgress();
-  return true;
-}
-async function stepBack(){
-  if (busy || idx<=0) return;
-  stopPlay();
-  busy = true; updateProgress();
-  const inv = invertTok(current.toks[idx-1]);
-  await animateMove(inv);
-  state = applyToken(state, inv);
-  idx--;
-  render(state); renderAlgline();
-  busy = false; updateProgress();
-}
-function reset(){
-  stopPlay();
-  if (busy) return;
-  loadCase(current);
-}
-async function play(){
-  if (playing){ stopPlay(); return; }
-  if (idx>=current.toks.length) loadCase(current);
-  playing = true; updateProgress();
-  while (playing && idx < current.toks.length){
-    const ok = await stepForward();
-    if (!ok) break;
-    await new Promise(r => setTimeout(r, Math.max(80, animDur*0.35)));
-  }
-  playing = false; updateProgress();
-}
-function stopPlay(){ playing = false; updateProgress(); }
-
-/* ---------- Sidebar ---------- */
-function buildSidebar(filter=''){
-  const list = $('caselist'); list.innerHTML = '';
-  const f = filter.trim().toLowerCase();
-  let lastGroup = null;
-  CASES.forEach(c => {
-    const hay = (c.alg+' '+c.desc+' '+c.group+' case '+c.num).toLowerCase();
-    if (f && !hay.includes(f)) return;
-    if (c.group !== lastGroup){
-      const h = document.createElement('div');
-      h.className = 'grouphdr'; h.textContent = c.group;
-      list.appendChild(h); lastGroup = c.group;
-    }
-    const el = document.createElement('div');
-    el.className = 'case' + (current && current.num===c.num ? ' active':'');
-    el.dataset.num = c.num;
-    el.innerHTML = `<div class="name"><span>Case ${c.num}</span><span>${c.toks.length} moves</span></div>`
-                 + `<div class="alg">${c.alg}</div>`;
-    el.onclick = () => loadCase(c);
-    list.appendChild(el);
-  });
-}
-
-/* ---------- View rotation ---------- */
-const VIEWS = {
-  topfront: [-26,-34], cross: [38,-34], reset: [-26,-34],
-};
-let viewX = -26, viewY = -34;
-function applyView(){ cubeEl.style.transform = `rotateX(${viewX}deg) rotateY(${viewY}deg)`; }
-document.querySelectorAll('.viewbtns button').forEach(b =>
-  b.onclick = () => { [viewX,viewY] = VIEWS[b.dataset.view]; applyView(); });
-
-const scene = $('scene');
-let drag = null;
-scene.addEventListener('pointerdown', e => {
-  drag = { x:e.clientX, y:e.clientY, vx:viewX, vy:viewY };
-  scene.setPointerCapture(e.pointerId);
-  cubeEl.style.transition = 'none';
-});
-scene.addEventListener('pointermove', e => {
-  if (!drag) return;
-  viewY = drag.vy + (e.clientX - drag.x)*0.5;
-  viewX = drag.vx - (e.clientY - drag.y)*0.5;
-  viewX = Math.max(-89, Math.min(89, viewX));
-  applyView();
-});
-const endDrag = () => { drag = null; cubeEl.style.transition = ''; };
-scene.addEventListener('pointerup', endDrag);
-scene.addEventListener('pointercancel', endDrag);
-
-/* ---------- Wire up ---------- */
-$('fwd').onclick   = () => { stopPlay(); stepForward(); };
-$('back').onclick  = stepBack;
-$('reset').onclick = reset;
-$('play').onclick  = play;
-$('speed').oninput = e => { animDur = 1480 - (+e.target.value); };  // slider right = faster
-animDur = 1480 - (+$('speed').value);
-$('search').oninput = e => buildSidebar(e.target.value);
-
-document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT') return;
-  if (e.key === 'ArrowRight'){ e.preventDefault(); stopPlay(); stepForward(); }
-  else if (e.key === 'ArrowLeft'){ e.preventDefault(); stepBack(); }
-  else if (e.key === ' '){ e.preventDefault(); play(); }
-});
-
-applyView();
-buildSidebar();
-if (CASES.length) loadCase(CASES[0]);
-else $('caseTitle').textContent = 'No cases generated — check console.';
-</script>
+<script src="engine.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

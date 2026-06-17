@@ -1,0 +1,144 @@
+:root{
+  --bg:#0e1116; --panel:#161b22; --panel2:#1b2230; --line:#2a313c;
+  --txt:#e6edf3; --dim:#9aa4b0; --accent:#3fb950; --accent2:#388bfd; --chip:#262d38;
+}
+*{box-sizing:border-box}
+html,body{margin:0; height:100%}
+body{
+  background:radial-gradient(120% 120% at 50% 0%, #131925 0%, var(--bg) 60%);
+  color:var(--txt);
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  min-height:100vh; min-height:100dvh; display:flex; flex-direction:column;
+  -webkit-text-size-adjust:100%;
+}
+
+/* Header */
+header{
+  position:sticky; top:0; z-index:20; background:rgba(14,17,22,.9);
+  backdrop-filter:blur(8px); border-bottom:1px solid var(--line);
+  display:flex; align-items:center; gap:10px; padding:10px 14px;
+}
+header h1{font-size:16px; margin:0; letter-spacing:.3px; white-space:nowrap}
+header .sub{color:var(--dim); font-size:12px; flex:1 1 auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+#casesBtn{
+  background:var(--accent); color:#04140a; border:none; font-weight:700;
+  border-radius:9px; padding:9px 14px; font-size:14px; cursor:pointer; white-space:nowrap;
+}
+#casesBtn:active{transform:translateY(1px)}
+
+/* Main column */
+main{
+  flex:1 1 auto; width:100%; max-width:520px; margin:0 auto;
+  padding:14px 14px 28px; display:flex; flex-direction:column; align-items:center; gap:14px;
+}
+
+/* Cube */
+.scene{
+  width:min(88vw,360px); aspect-ratio:1/1; perspective:1100px;
+  touch-action:none; user-select:none; -webkit-user-select:none; cursor:grab;
+  position:relative; border-radius:18px;
+  background:radial-gradient(120% 120% at 50% 30%, #1d2533 0%, #10141b 75%);
+  border:1px solid var(--line); box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  flex:0 0 auto;
+}
+.scene:active{cursor:grabbing}
+.cube{
+  position:absolute; top:50%; left:50%; width:0; height:0;
+  transform-style:preserve-3d; transition:transform .12s linear;
+}
+.cubie{position:absolute; top:0; left:0; transform-style:preserve-3d; margin:-29px 0 0 -29px}
+.face{
+  position:absolute; width:58px; height:58px; border-radius:8px;
+  border:2px solid #0a0c10; backface-visibility:hidden;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06), inset 0 -6px 10px rgba(0,0,0,.25);
+}
+
+/* View buttons */
+.viewbtns{display:flex; gap:8px; flex-wrap:wrap; justify-content:center}
+.viewbtns button{
+  background:var(--panel2); color:var(--txt); border:1px solid var(--line);
+  border-radius:8px; padding:7px 12px; font-size:13px; cursor:pointer;
+}
+.viewbtns button:active{border-color:var(--accent2)}
+
+/* Info bar */
+.infobar{
+  width:100%; background:var(--panel); border:1px solid var(--line);
+  border-radius:12px; padding:12px 14px;
+}
+.infobar .title{font-weight:600}
+.infobar .desc{color:var(--dim); font-size:12px; margin-top:2px}
+.algline{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:18px; margin-top:10px; display:flex; flex-wrap:wrap; gap:5px;
+}
+.mv{padding:3px 8px; border-radius:6px; background:var(--chip); color:var(--dim); transition:.15s}
+.mv.done{color:var(--txt)}
+.mv.next{background:var(--accent); color:#04140a; font-weight:700; box-shadow:0 0 0 2px rgba(63,185,80,.3)}
+
+/* Controls */
+.controls{display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:center; width:100%}
+button.ctrl{
+  background:var(--panel2); color:var(--txt); border:1px solid var(--line);
+  border-radius:10px; padding:12px 16px; font-size:16px; cursor:pointer; min-width:52px;
+}
+button.ctrl:active{transform:translateY(1px)}
+button.ctrl:disabled{opacity:.4}
+button.ctrl.primary{background:var(--accent); color:#04140a; border-color:var(--accent); font-weight:700; min-width:64px}
+.progress{font-variant-numeric:tabular-nums; color:var(--dim); font-size:13px; min-width:54px; text-align:center}
+.speed{display:flex; align-items:center; gap:10px; color:var(--dim); font-size:12px; width:100%; max-width:340px}
+.speed input{flex:1 1 auto; accent-color:var(--accent)}
+.hint{color:var(--dim); font-size:11px; text-align:center; max-width:440px}
+
+/* Drawer */
+#backdrop{
+  position:fixed; inset:0; background:rgba(0,0,0,.55); opacity:0; pointer-events:none;
+  transition:opacity .2s; z-index:30;
+}
+#backdrop.show{opacity:1; pointer-events:auto}
+#drawer{
+  position:fixed; top:0; left:0; right:0; z-index:40;
+  background:var(--panel); border-bottom:1px solid var(--line);
+  border-radius:0 0 16px 16px; box-shadow:0 18px 40px rgba(0,0,0,.5);
+  max-height:85vh; max-height:85dvh; display:flex; flex-direction:column;
+  transform:translateY(-102%); transition:transform .25s ease;
+}
+#drawer.open{transform:translateY(0)}
+.drawerhead{
+  display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid var(--line);
+}
+.drawerhead strong{font-size:15px}
+.drawerhead .spacer{flex:1 1 auto}
+#drawerClose{
+  background:var(--panel2); color:var(--txt); border:1px solid var(--line);
+  border-radius:8px; padding:7px 12px; cursor:pointer; font-size:14px;
+}
+.search{padding:10px 14px; border-bottom:1px solid var(--line)}
+.search input{
+  width:100%; padding:10px 12px; border-radius:9px; border:1px solid var(--line);
+  background:var(--bg); color:var(--txt); font-size:15px; outline:none;
+}
+.search input:focus{border-color:var(--accent2)}
+.caselist{overflow-y:auto; -webkit-overflow-scrolling:touch; padding:8px 8px 16px}
+.grouphdr{
+  font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:var(--dim);
+  padding:12px 8px 4px; position:sticky; top:0; background:var(--panel);
+}
+.case{padding:9px 11px; border-radius:9px; cursor:pointer; border:1px solid transparent; margin:2px 0}
+.case:active{background:var(--panel2)}
+.case.active{background:var(--panel2); border-color:var(--accent)}
+.case .name{font-size:12px; color:var(--dim); display:flex; justify-content:space-between}
+.case .alg{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:14px; margin-top:2px}
+.case.active .alg{color:var(--accent)}
+.case .cdesc{font-size:11px; color:var(--dim); margin-top:3px}
+
+@media (hover:hover){
+  .case:hover{background:var(--panel2)}
+  .viewbtns button:hover, button.ctrl:hover{border-color:var(--accent2)}
+}
+
+/* Wider screens: cap drawer width, center it */
+@media (min-width:640px){
+  #drawer{left:50%; right:auto; width:520px; transform:translate(-50%,-102%); border-radius:0 0 16px 16px}
+  #drawer.open{transform:translate(-50%,0)}
+}
