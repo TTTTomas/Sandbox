@@ -6,22 +6,15 @@
   const $ = id => document.getElementById(id);
 
   /* ---------- Cube DOM ---------- */
-  const S = 60, FH = 29;                 // 60px spacing, 58px solid blocks (2px gaps)
+  const S = 60;                          // lattice spacing (face size/depth set in CSS)
   const cubeEl = $('cube');
   const ALLDIRS = ['+x','-x','+y','-y','+z','-z'];
-  const faceCSS = {
-    '+x': `translateX(${FH}px) rotateY(90deg)`,
-    '-x': `translateX(${-FH}px) rotateY(-90deg)`,
-    '+y': `translateY(${-FH}px) rotateX(90deg)`,
-    '-y': `translateY(${FH}px) rotateX(-90deg)`,
-    '+z': `translateZ(${FH}px)`,
-    '-z': `translateZ(${-FH}px) rotateY(180deg)`,
-  };
+  const DIRCLASS = {'+x':'f-px','-x':'f-nx','+y':'f-py','-y':'f-ny','+z':'f-pz','-z':'f-nz'};
   const baseT = p => `translate3d(${p[0]*S}px, ${-p[1]*S}px, ${p[2]*S}px)`;
 
   // Each piece is a full solid block: outer faces carry colour, inner faces are
-  // the dark core. This makes pieces look solid and prevents see-through flicker
-  // when a face turns edge-on during a move.
+  // the dark core. Solid blocks (+ backface-hidden colour tiles) prevent both
+  // the see-through flicker on turns and colour leaking through the gaps.
   const cubies = HOMES.map(p => {
     const el = document.createElement('div');
     el.className = 'cubie';
@@ -30,9 +23,8 @@
     const faces = {};
     ALLDIRS.forEach(d => {
       const f = document.createElement('div');
-      f.style.transform = faceCSS[d];
-      if (outer.has(d)){ f.className = 'face'; faces[d] = f; }
-      else { f.className = 'face inner'; f.style.background = 'var(--cube-core)'; }
+      if (outer.has(d)){ f.className = 'face ' + DIRCLASS[d]; faces[d] = f; }
+      else { f.className = 'face inner ' + DIRCLASS[d]; f.style.background = 'var(--cube-core)'; }
       el.appendChild(f);
     });
     cubeEl.appendChild(el);
