@@ -2,12 +2,12 @@
   --bg:#0e1116; --bg2:#131925; --panel:#161b22; --panel2:#1b2230; --line:#2a313c;
   --txt:#e6edf3; --dim:#9aa4b0; --accent:#3fb950; --accent2:#388bfd; --chip:#262d38;
   --dim-piece:#3a4250; --cube-core:#0a0c10; --header:rgba(14,17,22,.88);
-  --face:56px; --fh:30px;      /* gaps within AND between pieces (uniform) */
+  --face:56px; --fh:31px;      /* gaps within AND between pieces (uniform) */
 }
 :root[data-theme="light"]{
   --bg:#eef1f5; --bg2:#ffffff; --panel:#ffffff; --panel2:#f1f4f8; --line:#d8dee6;
   --txt:#1c2128; --dim:#5a6472; --accent:#1f9d49; --accent2:#0969da; --chip:#e7ebf0;
-  --dim-piece:#34383e; --cube-core:#0a0c10; --header:#ffffff;
+  --dim-piece:#484c51; --cube-core:#0a0c10; --header:#ffffff;
   --face:59px; --fh:29px;      /* tiles meet inside the piece (edge-to-edge) */
 }
 *{box-sizing:border-box}
