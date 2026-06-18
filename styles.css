@@ -1,11 +1,17 @@
-:root{
-  --bg:#0e1116; --panel:#161b22; --panel2:#1b2230; --line:#2a313c;
+:root, :root[data-theme="dark"]{
+  --bg:#0e1116; --bg2:#131925; --panel:#161b22; --panel2:#1b2230; --line:#2a313c;
   --txt:#e6edf3; --dim:#9aa4b0; --accent:#3fb950; --accent2:#388bfd; --chip:#262d38;
+  --dim-piece:#3a4250; --cube-core:#0a0c10;
+}
+:root[data-theme="light"]{
+  --bg:#eef1f5; --bg2:#ffffff; --panel:#ffffff; --panel2:#f1f4f8; --line:#d8dee6;
+  --txt:#1c2128; --dim:#5a6472; --accent:#1f9d49; --accent2:#0969da; --chip:#e7ebf0;
+  --dim-piece:#c4cad4; --cube-core:#aab2bf;
 }
 *{box-sizing:border-box}
 html,body{margin:0; height:100%; overflow-x:hidden}
 body{
-  background:radial-gradient(120% 120% at 50% 0%, #131925 0%, var(--bg) 60%);
+  background:radial-gradient(120% 120% at 50% 0%, var(--bg2) 0%, var(--bg) 60%);
   color:var(--txt);
   font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   min-height:100vh; min-height:100dvh; display:flex; flex-direction:column;
@@ -61,11 +67,17 @@ main{
   transform-style:preserve-3d; transition:transform .12s linear;
 }
 .turn-group{position:absolute; top:0; left:0; width:0; height:0; transform-style:preserve-3d}
-.cubie{position:absolute; top:0; left:0; transform-style:preserve-3d; margin:-29px 0 0 -29px}
+.cubie{position:absolute; top:0; left:0; transform-style:preserve-3d; margin:-28px 0 0 -28px}
+/* stickerless: colour fills the piece edge-to-edge, gaps reveal the dark core */
 .face{
-  position:absolute; width:58px; height:58px; border-radius:8px;
-  border:2px solid #0a0c10; backface-visibility:hidden;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06), inset 0 -6px 10px rgba(0,0,0,.25);
+  position:absolute; width:56px; height:56px; border-radius:10px; border:0;
+  backface-visibility:hidden;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.10), inset 0 -9px 14px rgba(0,0,0,.22);
+}
+.core{position:absolute; top:0; left:0; width:0; height:0; transform-style:preserve-3d}
+.core-face{
+  position:absolute; width:176px; height:176px; margin:-88px 0 0 -88px;
+  border-radius:18px; background:var(--cube-core);
 }
 
 /* View buttons */
@@ -75,6 +87,17 @@ main{
   border-radius:8px; padding:7px 12px; font-size:13px; cursor:pointer;
 }
 .viewbtns button:active{border-color:var(--accent2)}
+.viewbtns button i{font-size:14px}
+#mirrorBtn.on{background:var(--accent); color:#04140a; border-color:var(--accent); font-weight:600}
+
+/* Segmented control (settings) */
+.segmented{display:flex; border:1px solid var(--line); border-radius:9px; overflow:hidden}
+.segmented button{
+  flex:1 1 0; background:var(--panel2); color:var(--txt); border:0;
+  border-left:1px solid var(--line); padding:9px 0; font-size:13px; cursor:pointer;
+}
+.segmented button:first-child{border-left:0}
+.segmented button.on{background:var(--accent); color:#04140a; font-weight:700}
 
 /* Info bar */
 .infobar{

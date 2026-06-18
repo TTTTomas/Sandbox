@@ -18,6 +18,23 @@
   };
   const baseT = p => `translate3d(${p[0]*S}px, ${-p[1]*S}px, ${p[2]*S}px)`;
 
+  // solid dark core so the gaps between stickerless pieces aren't see-through
+  const CH = (3 * S - 8) / 2;
+  const coreFaceCSS = {
+    '+x': `translateX(${CH}px) rotateY(90deg)`,  '-x': `translateX(${-CH}px) rotateY(-90deg)`,
+    '+y': `translateY(${-CH}px) rotateX(90deg)`, '-y': `translateY(${CH}px) rotateX(-90deg)`,
+    '+z': `translateZ(${CH}px)`,                 '-z': `translateZ(${-CH}px) rotateY(180deg)`,
+  };
+  const core = document.createElement('div');
+  core.className = 'core';
+  for (const d in coreFaceCSS){
+    const f = document.createElement('div');
+    f.className = 'core-face';
+    f.style.transform = coreFaceCSS[d];
+    core.appendChild(f);
+  }
+  cubeEl.appendChild(core);
+
   const cubies = HOMES.map(p => {
     const el = document.createElement('div');
     el.className = 'cubie';
@@ -39,16 +56,17 @@
       const f = state[c.key];
       const shown = isTracked(f);
       for (const d in c.faces)
-        c.faces[d].style.background = shown ? COLORS[f[d]] : COLORS.X;
+        c.faces[d].style.background = shown ? COLORS[f[d]] : 'var(--dim-piece)';
     }
   }
 
   /* ---------- View (rotate + responsive scale) ---------- */
   const scene = $('scene');
-  let viewX = -30, viewY = -38, viewScale = 1;
-  const VIEWS = { topfront:[-30,-38], cross:[34,-38], recenter:[-30,-38] };
+  let viewX = -30, viewY = -38, viewScale = 1, mirror = false;
+  const VIEWS = { topfront:[-30,-38], cross:[34,-38] };
   function applyView(){
-    cubeEl.style.transform = `scale(${viewScale}) rotateX(${viewX}deg) rotateY(${viewY}deg)`;
+    cubeEl.style.transform =
+      `${mirror ? 'scaleX(-1) ' : ''}scale(${viewScale}) rotateX(${viewX}deg) rotateY(${viewY}deg)`;
   }
   function fitCube(){
     // cube footprint ~3*S; leave margin so corners don't clip
@@ -68,7 +86,7 @@
   });
   scene.addEventListener('pointermove', e => {
     if (!drag) return;
-    viewY = drag.vy + (e.clientX - drag.x) * 0.5;
+    viewY = drag.vy + (e.clientX - drag.x) * 0.5 * (mirror ? -1 : 1);
     viewX = Math.max(-89, Math.min(89, drag.vx - (e.clientY - drag.y) * 0.5));
     applyView();
   });
@@ -109,6 +127,16 @@
   /* ---------- Trainer state ---------- */
   let current = null, state = null, idx = 0, busy = false, playing = false;
 
+  // Left-right mirror of a move (for display only; the engine is unchanged —
+  // the cube is flipped with scaleX(-1) so an R turn reads as the mirrored move).
+  const LRMAP = { R:'L', L:'R', U:'U', D:'D', F:'F', B:'B' };
+  const mirrorTok = t => LRMAP[t[0]] + (t.slice(1)==='2' ? '2' : t.slice(1)==="'" ? '' : "'");
+  const swapLR = s => s.replace(/\b(right|left)\b/g, m => m === 'right' ? 'left' : 'right');
+  function refreshCaseText(){
+    $('caseDesc').textContent = mirror ? swapLR(current.desc) : current.desc;
+    renderAlgline();
+  }
+
   function loadCase(c){
     stopPlay();
     current = c;
@@ -117,9 +145,8 @@
     idx = 0;
     render(state);
     $('caseTitle').textContent = `Case ${c.num} · ${c.group}`;
-    $('caseDesc').textContent = c.desc;
     $('casesLabel').textContent = `Case ${c.num}`;
-    renderAlgline();
+    refreshCaseText();
     updateProgress();
     document.querySelectorAll('.case').forEach(el =>
       el.classList.toggle('active', +el.dataset.num === c.num));
@@ -129,7 +156,7 @@
     current.toks.forEach((t, i) => {
       const s = document.createElement('span');
       s.className = 'mv' + (i < idx ? ' done' : '') + (i === idx ? ' next' : '');
-      s.textContent = t;
+      s.textContent = mirror ? mirrorTok(t) : t;
       line.appendChild(s);
     });
   }
@@ -238,6 +265,32 @@
   $('speed').oninput      = e => { animDur = 1480 - (+e.target.value); };
   $('search').oninput     = e => buildList(e.target.value);
   animDur = 1480 - (+$('speed').value);
+
+  $('mirrorBtn').onclick = () => {
+    mirror = !mirror;
+    $('mirrorBtn').classList.toggle('on', mirror);
+    applyView();
+    if (current) refreshCaseText();
+  };
+
+  /* ---------- Theme ---------- */
+  const THEME_KEY = 'f2l-theme';
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  const resolveTheme = pref => pref === 'system' ? (mq.matches ? 'dark' : 'light') : pref;
+  function applyTheme(){
+    const pref = localStorage.getItem(THEME_KEY) || 'system';
+    document.documentElement.dataset.theme = resolveTheme(pref);
+    document.querySelectorAll('#themeSeg button').forEach(b =>
+      b.classList.toggle('on', b.dataset.themeChoice === pref));
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+  }
+  document.querySelectorAll('#themeSeg button').forEach(b =>
+    b.onclick = () => { localStorage.setItem(THEME_KEY, b.dataset.themeChoice); applyTheme(); });
+  mq.addEventListener('change', () => {
+    if ((localStorage.getItem(THEME_KEY) || 'system') === 'system') applyTheme();
+  });
+  applyTheme();
 
   document.addEventListener('keydown', e => {
     if (e.target.tagName === 'INPUT') {

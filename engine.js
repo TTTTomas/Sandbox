@@ -78,8 +78,10 @@
   const invertTok = t => t.endsWith("'") ? t[0] : t.endsWith("2") ? t : t+"'";
   const invertAlg = toks => toks.slice().reverse().map(invertTok);
 
-  /* ---------- Tracked (coloured) pieces ---------- */
-  const TRACKED = new Set(['W','GW','RW','BW','OW','GRW','GR']);
+  /* ---------- Tracked (coloured) pieces ----------
+     White cross (edges + centre), the target corner (W/G/R) and edge (G/R),
+     plus every face centre except yellow (a stable colour reference). */
+  const TRACKED = new Set(['W','GW','RW','BW','OW','GRW','GR','G','R','B','O']);
   const colorKey = faces => Object.values(faces).slice().sort().join('');
   const isTracked = faces => TRACKED.has(colorKey(faces));
 

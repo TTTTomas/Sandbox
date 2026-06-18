@@ -4,10 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0e1116">
+<script>
+  /* set theme before paint to avoid a flash */
+  (function(){try{var p=localStorage.getItem('f2l-theme')||'system';
+    var d=p==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):p;
+    document.documentElement.dataset.theme=d;}catch(e){}})();
+</script>
 <title>F2L Trainer · Speedcubing</title>
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
-<link rel="stylesheet" href="styles.css?v=7">
+<link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body>
 
@@ -19,7 +25,13 @@
 
 <!-- Settings popover -->
 <div id="settings" class="popover">
-  <label class="setlabel">Animation speed</label>
+  <label class="setlabel">Theme</label>
+  <div class="segmented" id="themeSeg">
+    <button data-theme-choice="system">System</button>
+    <button data-theme-choice="light">Light</button>
+    <button data-theme-choice="dark">Dark</button>
+  </div>
+  <label class="setlabel" style="margin-top:14px">Animation speed</label>
   <div class="speed">Slow <input type="range" id="speed" min="180" max="1300" value="620" step="20"> Fast</div>
   <div class="sethint">Drag the cube to rotate · ← / → step · Space play/pause</div>
 </div>
@@ -41,8 +53,8 @@
 
   <div class="viewbtns">
     <button data-view="topfront">Top / F-R</button>
-    <button data-view="cross">Cross (bottom)</button>
-    <button data-view="recenter">Re-center</button>
+    <button data-view="cross">Cross</button>
+    <button id="mirrorBtn"><i class="ph ph-flip-horizontal"></i> Mirror</button>
     <button id="settingsBtn" title="Settings"><i class="ph ph-gear"></i></button>
   </div>
 
@@ -61,7 +73,7 @@
   </div>
 </main>
 
-<script src="engine.js?v=5"></script>
-<script src="app.js?v=7"></script>
+<script src="engine.js?v=8"></script>
+<script src="app.js?v=8"></script>
 </body>
 </html>
